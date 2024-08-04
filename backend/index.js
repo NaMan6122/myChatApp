@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
-import { Server } from "socket.io";
-import connectDB from "./dbConfig/dbConfig";
-import { app } from "./app";
+import connectDB from "./dbConfig/dbConfig.js";
+import { app } from "./app.js";
 
 dotenv.config({
     path: "./.env",
@@ -15,7 +14,7 @@ connectDB()
         }
     });
     app.listen(process.env.PORT, () => {
-        console.log(`Server is Running on Port ${process.env.PORT}`);
-    })
+        console.log(`Server is Running on Port ${process.env.PORT}!`);
+    });
 })
 .catch((error) => console.log(`Server Connection Error!! ${error}`));

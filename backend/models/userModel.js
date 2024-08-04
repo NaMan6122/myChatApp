@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const userModel = mongoose.Schema({
+const userModel = new mongoose.Schema({
     fullName: {
         type: String,
         required: true,
@@ -24,17 +24,22 @@ const userModel = mongoose.Schema({
         type: String,
         enum: ["expert", "student"],
         default: "student",
-        required: true,
+        //required: true,
     },
-    refreshToken : String,
+    //refreshToken : String,
 
 }, {timestamps : true});
 
 userModel.pre("save", async function (next) {
     if(this.isModified("password")){
-        const salt = bcryptjs.genSalt(10);
-        this.password = await bcryptjs.hash(this.password, salt);
+        try{
+            const salt = await bcryptjs.genSalt(10);
+            this.password = await bcryptjs.hash(this.password, salt);
+        } catch(error){
+            return next(error);
+        }
     }
+    next()
 });
 
 userModel.methods.isPasswordCorrect = async function(password) {
