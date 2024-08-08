@@ -12,6 +12,7 @@ export default function signupPage() {
         username: "",
         email: "",
         password: "",
+        role: "" //by default.
     });
 
     const [loading, setLoading] = React.useState(false);
@@ -87,6 +88,16 @@ export default function signupPage() {
             value={user.password}
             onChange = {(e) => setUser({...user, password: e.target.value})}
             placeholder= "password"
+            />
+
+            <label htmlFor = "role">role</label>
+            <input
+            className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
+            id="role"
+            type="text"
+            value={user.role}
+            onChange={(e) => setUser({...user, role: e.target.value})}
+            placeholder="Student By Default"
             />
 
             <button

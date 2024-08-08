@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv"
+dotenv.config();
 
 const userModel = new mongoose.Schema({
     fullName: {
@@ -26,7 +28,7 @@ const userModel = new mongoose.Schema({
         default: "student",
         //required: true,
     },
-    //refreshToken : String,
+    refreshToken : String,
 
 }, {timestamps : true});
 
@@ -43,7 +45,9 @@ userModel.pre("save", async function (next) {
 });
 
 userModel.methods.isPasswordCorrect = async function(password) {
-    return await bcryptjs.compare(password, this.password);
+    //console.log(password, this.password)
+    const res = await bcryptjs.compare(password, this.password);
+    return res;
 };
 
 userModel.methods.generateRefreshToken = async function() {
@@ -53,10 +57,22 @@ userModel.methods.generateRefreshToken = async function() {
     process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
     });
-    console.log(`refreshToken: ${token}`);
+    //console.log(`refreshToken: ${token}`);
     return token;
 };
 
-
+userModel.methods.generateAccessToken = async function(){
+    const token = jwt.sign({
+        _id: this._id.toString(),
+        username: this.username,
+        email: this.email,
+        fullName: this.fullName,
+    },
+    process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    });
+    //console.log(`accessToken: ${token}`);
+    return token;
+};
 
 export const User = mongoose.model("User", userModel);

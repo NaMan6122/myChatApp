@@ -1,14 +1,18 @@
 import { Router } from "express";
-import { onSignup } from "../controllers/user.controllers.js"
+import { getCurrentUserInfo, onLogin, onSignup } from "../controllers/user.controllers.js"
+import { verifyJWT } from "../middlewares/auth.middleware.js"
 
 
 
 const router = Router();
 
 router.route("/signup").post(onSignup);
-router.route("/login").post();
-router.route("/logout").post();
-router.route(".profile").get();
-router.route("/reset-password").patch();
+router.route("/login").post(onLogin);
+
+//secure routes
+router.route("/logout").post(verifyJWT);
+router.route("/profile").get(verifyJWT);
+router.route("/reset-password").patch(verifyJWT);
+router.route("/get-user-info").get(verifyJWT, getCurrentUserInfo);
 
 export default router
